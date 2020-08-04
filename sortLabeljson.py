@@ -9,8 +9,9 @@ labelsdir = "./defect_labels"
 classes = {"None", "Double Sealed", "Two Trays", "Sideways Tray", "No Seal", "Other Defect"}
 labels_list = glob.glob(os.path.join(labelsdir, "*.json"))
 
+
 for labelsjson in labels_list:
-    with open(labelsdir) as json_file:
+    with open(labelsjson) as json_file:
         data = json.load(json_file)
 
 
