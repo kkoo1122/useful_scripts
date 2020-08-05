@@ -6,9 +6,9 @@ import json
 import numpy as np
 from IPython import embed
 
-imagesdir = "./cheese5-good"
-labelsdir = "./defect_labels"
-showImage = True
+imagesdir = "/auto/shared/client_data/nestle/protein/datasets/lc-5_cheees_rigatoni/May26_2020/cheese5-good"
+labelsdir = "/auto/shared/client_data/nestle/protein/datasets/lc-5_cheees_rigatoni/May26_2020/defect_labels"
+showImage = False
 classes = {"None":0, "Double Sealed":0, "Two Trays":0, "Sideways Tray":0, "No Seal":0, "Other Defect":0}
 
 
@@ -99,10 +99,18 @@ def showLabelWindow(c, filenme, mark=False):
                    1, (255,255,255), 2, cv2.LINE_AA)      
     cv2.imshow("label", labeltxt)
     cv2.resizeWindow("label", 512,256)
-    cv2.moveWindow("label", 0, 100)
+    cv2.moveWindow("label", 0, 256)
 
 
-def showResult(imagesdir, labelsdir, classes, showImage=True):      
+def showResult(imagesdir, labelsdir, classes, showImage=True):
+    wrongLabels = []
+    if not showImage:
+        if os.path.exists(os.path.join(imagesdir,"wronglabel.txt")):
+            file1 = open(os.path.join(imagesdir,"wronglabel.txt"),'r')
+            for l in file1:
+                wrongLabels.append(os.path.basename(l)[:-1])
+            file1.close()
+
     writelist = []
     wrong, total = 0, 0
     
@@ -122,7 +130,13 @@ def showResult(imagesdir, labelsdir, classes, showImage=True):
             print(f"{bcolors.OKGREEN} >>",labelfolder, f"{bcolors.ENDC}" )            
             #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>            
             for fn in imgsdir:
-                print(f"     ",os.path.basename(fn))
+                if wrongLabels:
+                    if os.path.basename(fn) in wrongLabels:
+                        print(f"      {bcolors.FAIL}{bcolors.BOLD}{bcolors.UNDERLINE}",os.path.basename(fn), f"{bcolors.ENDC}")
+                    else:
+                        print(f"     ",os.path.basename(fn))
+                else:
+                    print(f"     ",os.path.basename(fn))
                 total += 1
                 if showImage:
                     showLabelWindow(c, os.path.basename(fn), mark=False)
@@ -168,11 +182,10 @@ def showResult(imagesdir, labelsdir, classes, showImage=True):
     print(f"{bcolors.BOLD} {bcolors.HEADER}",end="")
     if showImage:        
         print()
-        print("<<<<<<<<<<<<<Total Wrong Labeled :", wrong, "<<<<<<<<<<<<<")
-    
-    file1 = open(os.path.join(imagesdir,"wronglabel.txt"),"w") 
-    for f in writelist:
-        file1.write(f+"\n")
+        print(">>>>>>>>>>>>> Total Wrong Labeled :", wrong, "<<<<<<<<<<<<<")    
+        file1 = open(os.path.join(imagesdir,"wronglabel.txt"),"w") 
+        for f in writelist:
+            file1.write(f+"\n")
 
                     
 
