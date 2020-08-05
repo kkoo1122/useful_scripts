@@ -6,9 +6,13 @@ import json
 import numpy as np
 from IPython import embed
 
-imagesdir = "/auto/shared/client_data/nestle/protein/datasets/lc-5_cheees_rigatoni/May26_2020/cheese5-good"
-labelsdir = "/auto/shared/client_data/nestle/protein/datasets/lc-5_cheees_rigatoni/May26_2020/defect_labels"
+imagesdir = "/media/kevintsai/cef8b40c-14d2-4a8f-a359-9da3eeceb1d4/Projects/Cloud_Factory_Data/Protein/stfr_meatsauce_july_15_2020/images"
+labelsdir = "/media/kevintsai/cef8b40c-14d2-4a8f-a359-9da3eeceb1d4/Projects/Cloud_Factory_Data/Protein/stfr_meatsauce_july_15_2020/labels"
 showImage = False
+sortingFromJson = False
+
+
+
 classes = {"None":0, "Double Sealed":0, "Two Trays":0, "Sideways Tray":0, "No Seal":0, "Other Defect":0}
 
 
@@ -26,6 +30,7 @@ def sortJsonFiles(imagesdir, labelsdir, classes):
     """
     Sorting Images with .json files
     """
+    print("Sorting" + "...")
     labels_list = glob.glob(os.path.join(labelsdir, "*.json"))  
     # create classes and each json file's folder  (data feedbach for Cloud Factory)
     for c in classes:    
@@ -43,7 +48,6 @@ def sortJsonFiles(imagesdir, labelsdir, classes):
                 os.system("rm -rf \""+ os.path.join(imagesdir, c, labelsjson)+"\"")
                 os.mkdir(os.path.join(imagesdir, c, labelsjson))
 
-    print("Sorting" + "...")
     # make hard link into each folder
     cnt, labeled = 0, 0     
     for jf in labels_list:               
@@ -191,8 +195,8 @@ def showResult(imagesdir, labelsdir, classes, showImage=True):
 
 
 if __name__ == "__main__":    
-          
-    sortJsonFiles(imagesdir, labelsdir, classes)
+    if sortingFromJson:      
+        sortJsonFiles(imagesdir, labelsdir, classes)
     showResult(imagesdir, labelsdir, classes, showImage=showImage)
 
 
